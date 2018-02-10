@@ -1,5 +1,5 @@
-const options = require('./config.json');
-const { Client } = require('./framework');
+const options = require('../config');
+const { Client } = require('../src');
 
 const client = new Client(options);
 client.login();
