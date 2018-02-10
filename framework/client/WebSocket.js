@@ -1,0 +1,72 @@
+const WS = require('ws');
+const Message = require('../structures/Message');
+
+/**
+ * The WebSocket handler of the client
+ * @private
+ */
+// TODO: document this and handle closes better
+class WebSocket {
+	constructor(client) {
+		/**
+		 * The client that instantiated the WebSocket manager
+		 * @type {Client}
+		 */
+		this.client = client;
+	}
+
+	/**
+	 * Connects the WebSocket
+	 * @returns {Promise<Client>}
+	 */
+	connect() {
+		return new Promise((resolve, reject) => {
+			this.ws = new WS(`wss://${this.client.options.server}:${this.client.options.port}/`, 'irc');
+			this.ws.onopen = this.onOpen.bind(this);
+			this.ws.onerror = (e) => this.onError(e, reject);
+			this.ws.onclose = (e) => this.onClose(e, reject);
+			setTimeout(() => resolve(this.client), 1000 * 15);
+		}).then(() => {
+			this.client.emit('ready');
+			this.ws.onmessage = this.onMessage.bind(this);
+		});
+	}
+
+	onOpen() {
+		if (this.ws !== null && this.ws.readyState === 1) {
+			this.client.emit('debug', 'Connecting and authenticating...');
+			this.ws.send('CAP REQ :twitch.tv/tags twitch.tv/commands twitch.tv/membership');
+			this.ws.send(`PASS oauth:${this.client.options.access_token}`);
+			this.ws.send(`NICK ${this.client.options.username}`);
+			for (const channel of this.client.options.channels) {
+				this.ws.send(`JOIN #${channel}`);
+				this.client.emit('debug', `Joined channel #${channel}`);
+			}
+		}
+	}
+
+	onMessage(message) {
+		this.client.emit('debug', message && message.data ? message.data : 'empty');
+		if (!message) return;
+		if (/user-id=(.\d*)/.test(message.data) && /PRIVMSG #(.*) :/.test(message.data)) {
+			const msg = new Message(message.data);
+			this.client.emit('message', msg);
+		}
+		else if (message.data.includes('PING')) {
+			this.ws.send('PONG :tmi.twitch.tv');
+			this.client.emit('debug', 'responded with PONG to twitch');
+		}
+	}
+
+	async onError(message, reject) {
+		this.client.emit('debug', 'Error with WebSocket');
+		return reject(new Error('Error with WebSocket'));
+	}
+
+	async onClose(message, reject) {
+		this.client.emit('debug', 'WebSocket closed');
+		return reject(new Error('WebSocket closed'));
+	}
+}
+
+module.exports = WebSocket;

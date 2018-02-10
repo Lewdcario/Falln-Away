@@ -1,0 +1,24 @@
+{
+  "name": "falln-away",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lewdcario/Falln-Away.git"
+  },
+  "author": "Lewdcario",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Lewdcario/Falln-Away/issues"
+  },
+  "homepage": "https://github.com/Lewdcario/Falln-Away#readme",
+  "dependencies": {
+    "express": "^4.16.2",
+    "snekfetch": "^3.6.4",
+    "ws": "^4.0.0"
+  }
+}

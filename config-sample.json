@@ -1,0 +1,14 @@
+{
+    "client_id": "<clientid>",
+    "client_secret": "<clientsecret>",
+    "base": "http://localhost",
+    "callback": "/auth/twitch/callback",
+    "port": 443,
+    "server": "irc-ws.chat.twitch.tv",
+    "channels": [
+        "<channelname>"
+    ],
+    "file_path": "<absolutepathtothisfile>",
+    "access_token": "",
+    "refresh_token": ""
+}
