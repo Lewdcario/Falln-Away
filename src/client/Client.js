@@ -30,7 +30,7 @@ class Client extends EventEmitter {
 		this.ws = new WebSocket(this);
 
 		this._database = new Database(this.options.file_path, this);
-		auth.run();
+		auth.run.call(this);
 	}
 
 	/**
@@ -46,7 +46,7 @@ class Client extends EventEmitter {
 		return this.ws.connect()
 			.catch(() => this._refreshToken()
 				.then(this.login)
-				.catch(() => this.emit('debug', 'Refreshing token failed')));
+				.catch((e) => this.emit('error', 'Refreshing token failed', e)));
 	}
 
 	/**
@@ -63,16 +63,15 @@ class Client extends EventEmitter {
 
 	async _refreshToken() {
 		if (!this.options.client_secret) throw new Error('MISSING CLIENT SECRET');
+		if (!this.options.refresh_token) throw new Error('MISSING REFRESH TOKEN');
 
-		const body = await axios.post('https://api.twitch.tv/kraken/oauth2/token?')
-			.set('Content-Type', 'application/x-www-form-urlencoded')
-			.send(stringify({
+		const body = await axios.post('https://api.twitch.tv/kraken/oauth2/token',
+			stringify({
 				grant_type: 'refresh_token',
 				refresh_token: this.options.refresh_token,
 				client_id: this.options.client_id,
 				client_secret: this.options.client_secret
-			})).then(res => res.body)
-			.catch(console.error);
+			}), { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
 
 		if (!body) throw new Error('REFRESH FAILED');
 

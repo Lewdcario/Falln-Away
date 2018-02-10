@@ -54,18 +54,16 @@ class WebSocket {
 		}
 		else if (message.data.includes('PING')) {
 			this.ws.send('PONG :tmi.twitch.tv');
-			this.client.emit('debug', 'responded with PONG to twitch');
+			this.client.emit('debug', 'Responded with PONG to Twitch');
 		}
 	}
 
 	async onError(message, reject) {
-		this.client.emit('debug', 'Error with WebSocket');
-		return reject(new Error('Error with WebSocket'));
+		return reject(new Error(`WebSocket errored with code ${message.code}, message: ${message.message}`));
 	}
 
 	async onClose(message, reject) {
-		this.client.emit('debug', 'WebSocket closed');
-		return reject(new Error('WebSocket closed'));
+		return reject(new Error(`WebSocket closed with code ${message.code}, message: ${message.message}`));
 	}
 }
 
