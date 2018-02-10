@@ -25,11 +25,11 @@ class Message {
 	}
 
 	/**
-     * When concatenated with a string, this automatically concatenates the message's content instead of the object.
-     * @returns {string}
-     * @example
-     * console.log(`Message: ${message}`);
-     */
+	 * When concatenated with a string, this automatically concatenates the message's content instead of the object.
+	 * @returns {string}
+	 * @example
+	 * console.log(`Message: ${message}`);
+	*/
 	toString() {
 		return this.content;
 	}

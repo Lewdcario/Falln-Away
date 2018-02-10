@@ -3,7 +3,7 @@ const config = require('../../config');
 const path = require('path');
 const fs = require('fs');
 const express = require('express');
-const snekfetch = require('snekfetch');
+const axios = require('axios');
 const { parse } = require('url');
 
 const app = express();
@@ -32,7 +32,7 @@ const handleCallback = async(req, res) => {
 	].join('&');
 
 	const URI = `https://api.twitch.tv/kraken/oauth2/token?${TOKEN_PARAMS}`;
-	const response = await snekfetch.post(URI).catch(console.error);
+	const response = await axios.post(URI).catch(console.error);
 
 	if (!response || !response.body || [401, 404].includes(response.body.status)) {
 		return res.redirect('https://discordapp.com/oauth2/error');
@@ -57,7 +57,7 @@ const handleAuth = async(req, res) => {
 	].join('&');
 
 	const URI = `https://api.twitch.tv/kraken/oauth2/authorize?${TOKEN_PARAMS}`;
-	const response = await snekfetch.get(URI).catch(console.error);
+	const response = await axios.get(URI).catch(console.error);
 
 	if (!response || !response.body || [401, 404].includes(response.body.status)) {
 		return res.redirect('https://discordapp.com/oauth2/error');

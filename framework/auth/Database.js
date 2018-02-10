@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const { inspect } = require('util');
 
 /**
  * The Database handler for this application
@@ -53,10 +52,6 @@ class Database {
 		file.refresh_token = data.refresh_token;
 		fs.writeFileSync(path.resolve(this.client.options.file_path), JSON.stringify(file, null, 4));
 		Object.assign(this.client.options, file);
-	}
-
-	[inspect.custom]() {
-		return 'eep!';
 	}
 }
 

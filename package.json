@@ -17,8 +17,8 @@
   },
   "homepage": "https://github.com/Lewdcario/Falln-Away#readme",
   "dependencies": {
+    "axios": "^0.17.1",
     "express": "^4.16.2",
-    "snekfetch": "^3.6.4",
     "ws": "^4.0.0"
   }
 }

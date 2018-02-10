@@ -1,6 +1,6 @@
 const { EventEmitter } = require('events');
 const WebSocket = require('./WebSocket');
-const snekfetch = require('snekfetch');
+const axios = require('axios');
 const Database = require('../auth/Database');
 const { stringify } = require('querystring');
 const auth = require('../auth/auth');
@@ -64,7 +64,7 @@ class Client extends EventEmitter {
 	async _refreshToken() {
 		if (!this.options.client_secret) throw new Error('MISSING CLIENT SECRET');
 
-		const body = await snekfetch.post('https://api.twitch.tv/kraken/oauth2/token?')
+		const body = await axios.post('https://api.twitch.tv/kraken/oauth2/token?')
 			.set('Content-Type', 'application/x-www-form-urlencoded')
 			.send(stringify({
 				grant_type: 'refresh_token',
@@ -87,7 +87,7 @@ class Client extends EventEmitter {
 			`token=${this.options.access_token}`
 		].join('&');
 
-		return snekfetch.post(`https://api.twitch.tv/kraken/oauth2/revoke?${TOKEN_PARAMS}`);
+		return axios.post(`https://api.twitch.tv/kraken/oauth2/revoke?${TOKEN_PARAMS}`);
 	}
 }
 
