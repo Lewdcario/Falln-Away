@@ -2,9 +2,11 @@
 
 1. Make an app [here](https://dev.twitch.tv/dashboard/apps)
 2. Copy the client id and client secret in `config.json`, and set up its values found in `config-sample.json`
-3. Set the OAuth Redirect URI to `http://localhost:443/auth/twitch/callback` if locally testing, otherwise, use your IP or domain instead of localhost
-4. Run `examples/index.js`
-5. Visit `http://localhost:443/auth/twitch` to authorize
+3. Visit the `Quick Access Token` link below, and fill in `acces_token` in `config.json`, leave `refresh_token` blank - it will be updated when you authorize successfully
+4. Set the `port` to any number higher than `1024`, for reasons.
+5. Set the OAuth Redirect URI to `http://localhost:443/auth/twitch/callback` if locally testing, otherwise, use your IP or domain instead of localhost
+6. Run `examples/index.js`
+7. Visit `http://localhost:443/auth/twitch` to authorize
 
 ## Some Helpful Links
 

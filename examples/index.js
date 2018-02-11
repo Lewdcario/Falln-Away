@@ -15,6 +15,9 @@ client.on('message', message => {
 
 	if (command === 'ping') return client.send(message.channel, 'pong!');
 	if (command === 'queue') {
+		if (queue.includes(message.author)) {
+			return message.reply('Looks like you are already in the queue!');
+		}
 		queue.push(message.author);
 		return client.send(message.channel, `I have successfully added you to the queue, ${message.author}!`);
 	}
@@ -25,20 +28,23 @@ client.on('message', message => {
 		if (!message.author.mod && !message.author.broadcaster) {
 			return client.send(message.channel, 'Only the broadcaster or a mod can use this command.');
 		}
-		queue.shift();
-		if (queue.length === 0) return client.send(message.channel, 'There is nobody in the queue!');
-		return client.send(message.channel, `${queue[0]}, you're up!`);
+		if (!queue.length) return client.send(message.channel, 'There is nobody in the queue!');
+		return client.send(message.channel, `${queue.shift()} is up next!`);
 	}
 	if (command === 'close' || command === 'finish') {
 		if (!message.author.mod && !message.author.broadcaster) {
 			return client.send(message.channel, 'Only the broadcaster or a mod can use this command.');
 		}
+		if (!queue.length) {
+			return client.send(message.channel, 'The queue is already empty!');
+		}
 		if (isNaN(args[0])) {
 			queue = [];
 			return client.send(message.channel, 'The queue has been completely cleared! No more people!');
 		}
-		queue.slice(0, parseInt(args[0]));
-		return client.send(message.channel, `There is only time left for ${args[0]} more players, then the queue will be closed!`);
+		const amount = parseInt(args[0]) % queue.length;
+		queue.slice(0, amount);
+		return client.send(message.channel, `There is only time left for ${amount} more players, then the queue will be closed!`);
 	}
 
 	return null;

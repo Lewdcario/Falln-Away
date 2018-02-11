@@ -57,6 +57,7 @@ class User {
 		 */
 		this.color = (data.match(/#([a-f]|[A-F]|[0-9]){3}(([a-f]|[A-F]|[0-9]){3})?\b/) || [])[0];
 	}
+
 	/**
 	 * When concatenated with a string, this automatically concatenates the user's mention instead of the User object.
 	 * @returns {string}

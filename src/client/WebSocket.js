@@ -19,9 +19,10 @@ class WebSocket {
 	 * Connects the WebSocket
 	 * @returns {Promise<Client>}
 	 */
+	// TODO: Better resolve handling for possible timeouts
 	connect() {
 		return new Promise((resolve, reject) => {
-			this.ws = new WS(`wss://${this.client.options.server}:${this.client.options.port}/`, 'irc');
+			this.ws = new WS(`wss://${this.client.options.server}:443/`, 'irc');
 			this.ws.onopen = this.onOpen.bind(this);
 			this.ws.onerror = (e) => this.onError(e, reject);
 			this.ws.onclose = (e) => this.onClose(e, reject);
@@ -58,12 +59,12 @@ class WebSocket {
 		}
 	}
 
-	async onError(message, reject) {
-		return reject(new Error(`WebSocket errored with code ${message.code}, message: ${message.message}`));
+	async onError(error, reject) {
+		return reject(new Error(`WebSocket errored with code ${error.code}, message: ${error.message}`));
 	}
 
-	async onClose(message, reject) {
-		return reject(new Error(`WebSocket closed with code ${message.code}, message: ${message.message}`));
+	async onClose(error, reject) {
+		return reject(new Error(`WebSocket closed with code ${error.code}, message: ${error.message}`));
 	}
 }
 
