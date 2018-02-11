@@ -19,9 +19,10 @@ class WebSocket {
 	 * Connects the WebSocket
 	 * @returns {Promise<Client>}
 	 */
+	// TODO: Better resolve handling for possible timeouts
 	connect() {
 		return new Promise((resolve, reject) => {
-			this.ws = new WS(`wss://${this.client.options.server}:${this.client.options.port}/`, 'irc');
+			this.ws = new WS(`wss://${this.client.options.server}:443/`, 'irc');
 			this.ws.onopen = this.onOpen.bind(this);
 			this.ws.onerror = (e) => this.onError(e, reject);
 			this.ws.onclose = (e) => this.onClose(e, reject);
@@ -54,18 +55,16 @@ class WebSocket {
 		}
 		else if (message.data.includes('PING')) {
 			this.ws.send('PONG :tmi.twitch.tv');
-			this.client.emit('debug', 'responded with PONG to twitch');
+			this.client.emit('debug', 'Responded with PONG to Twitch');
 		}
 	}
 
-	async onError(message, reject) {
-		this.client.emit('debug', 'Error with WebSocket');
-		return reject(new Error('Error with WebSocket'));
+	async onError(error, reject) {
+		return reject(new Error(`WebSocket errored with code ${error.code}, message: ${error.message}`));
 	}
 
-	async onClose(message, reject) {
-		this.client.emit('debug', 'WebSocket closed');
-		return reject(new Error('WebSocket closed'));
+	async onClose(error, reject) {
+		return reject(new Error(`WebSocket closed with code ${error.code}, message: ${error.message}`));
 	}
 }
 

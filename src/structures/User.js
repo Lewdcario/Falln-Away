@@ -31,7 +31,7 @@ class User {
 		 * Whether or not the user is the channel's broadcaster
 		 * @type {boolean}
 		 */
-		this.broadcaster = /[\s\S]*#(.*) /.test(data) ? data.match(/[\s\S]*#(.*) /)[1] === this.username : false;
+		this.broadcaster = data.includes('broadcaster/1');
 
 		/**
 		 * Whether or not the user is a mod for the channel
@@ -57,6 +57,7 @@ class User {
 		 */
 		this.color = (data.match(/#([a-f]|[A-F]|[0-9]){3}(([a-f]|[A-F]|[0-9]){3})?\b/) || [])[0];
 	}
+
 	/**
 	 * When concatenated with a string, this automatically concatenates the user's mention instead of the User object.
 	 * @returns {string}

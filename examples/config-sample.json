@@ -3,7 +3,7 @@
     "client_secret": "<clientsecret>",
     "base": "http://localhost",
     "callback": "/auth/twitch/callback",
-    "port": 443,
+    "port": 0,
     "server": "irc-ws.chat.twitch.tv",
     "channels": [
         "<channelname>"
