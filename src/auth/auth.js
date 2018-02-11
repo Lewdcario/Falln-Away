@@ -5,17 +5,18 @@ const { parse } = require('url');
 const app = express();
 app.use(express.static('public'));
 
+// TODO: Get own success/error images for the end redirects
 module.exports.run = function run() {
 	const config = this._database.file;
 
 	const TWITCH_CLIENT_ID = config.client_id;
 	const TWITCH_SECRET = config.client_secret;
-	const CALLBACK_URL = `${config.base}:${config.port}/auth/twitch/callback`;
+	const CALLBACK_URL = `${config.base}${config.port_exposed ? `:${config.port}` : ''}${config.callback}`;
 
 	// Set route to start OAuth link, this is where you define scopes to request, then redirect to the authorization url
-	app.get('/auth/twitch', async(req, res) => {
+	app.get(config.redirect, async(req, res) => {
 		if (res.statusCode !== 200) {
-			this.emit('error', 'Error on /auth/twitch', req);
+			this.emit('error', `Error on ${config.redirect}`, req);
 			return res.redirect('https://discordapp.com/oauth2/error');
 		}
 
@@ -38,7 +39,11 @@ module.exports.run = function run() {
 	});
 
 	// If user has an authenticated session, display it, otherwise display link to authenticate
-	app.get('/auth/twitch/callback', async(req, res) => {
+	app.get(config.callback, async(req, res) => {
+		if (res.statusCode !== 200) {
+			this.emit('error', `Error on ${config.callback}`, req);
+			return res.redirect('https://discordapp.com/oauth2/error');
+		}
 		const CODE = parse(req.url, true).query.code;
 
 		const TOKEN_PARAMS = [

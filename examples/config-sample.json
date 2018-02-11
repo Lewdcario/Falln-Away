@@ -2,7 +2,9 @@
     "client_id": "<clientid>",
     "client_secret": "<clientsecret>",
     "base": "http://localhost",
+    "redirect": "/auth/twitch",
     "callback": "/auth/twitch/callback",
+    "port_exposed": true,
     "port": 0,
     "server": "irc-ws.chat.twitch.tv",
     "channels": [
