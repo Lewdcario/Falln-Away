@@ -13,7 +13,7 @@ class User {
 		 * The username of the user
 		 * @type {string}
 		 */
-		this.username = data.match(/PRIVMSG #(.*) :/)[1];
+		this.username = data.match(/user-type= :(.*?)!/)[1];
 
 		/**
 		 * The user's selected display name

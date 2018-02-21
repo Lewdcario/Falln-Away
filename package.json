@@ -1,6 +1,6 @@
 {
   "name": "falln-away",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Twitch API Wrapper & Authorizer - all in one package, and handled for you!",
   "main": "src/index.js",
   "scripts": {
@@ -15,6 +15,16 @@
   "bugs": {
     "url": "https://github.com/Lewdcario/Falln-Away/issues"
   },
+  "keywords": [
+    "twitch",
+    "twitch api",
+    "twitch-bot",
+    "twitch-irc",
+    "twitchbot",
+    "oauth2",
+    "oauth",
+    "oauth2-provider"
+  ],
   "homepage": "https://github.com/Lewdcario/Falln-Away#readme",
   "dependencies": {
     "axios": "^0.17.1",
