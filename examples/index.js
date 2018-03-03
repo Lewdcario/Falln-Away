@@ -4,7 +4,7 @@ const options = require('./config-sample');
 const { Client } = require('../src');
 
 const client = new Client(options);
-client.login();
+client.login().catch(e => console.error('Failed to login', e));
 
 const prefix = '!';
 let queue = [];
@@ -13,11 +13,16 @@ let amt = 0;
 
 client.on('ready', () => console.log('Logged in successfully!'));
 
+const help = 'Commands list: ping, help, queue, viewqueue, next, close, enable';
+
 client.on('message', message => {
 	if (!message.content.startsWith(prefix) || message.author.bot) return null;
 	const [command, ...args] = message.content.slice(prefix.length).split(' ');
 
 	if (command === 'ping') return client.send(message.channel, 'pong!');
+	if (command === 'help') {
+		client.whisper(message.channel, message.author, help);
+	}
 	if (!enabled && amt === 0) {
 		return client.send(message.channel, 'Commands are currently disabled!');
 	}

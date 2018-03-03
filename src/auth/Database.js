@@ -50,6 +50,7 @@ class Database {
 		const file = this.file;
 		file.access_token = data.access_token;
 		file.refresh_token = data.refresh_token;
+		if (!file.access_token || !file.refresh_token) throw new Error('MISSING ACCESS OR REFRESH TOKEN');
 		fs.writeFileSync(path.resolve(this.client.options.file_path), JSON.stringify(file, null, 4));
 		Object.assign(this.client.options, file);
 	}
