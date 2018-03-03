@@ -5,6 +5,8 @@ const Database = require('../auth/Database');
 const { stringify } = require('querystring');
 const auth = require('../auth/auth');
 
+const User = require('../structures/User');
+
 /**
  * The starting point for making a Twitch Bot
  * @extends {EventEmitter}
@@ -58,6 +60,17 @@ class Client extends EventEmitter {
 	// TODO: handle ratelimits, probably try catch, also make this a promise
 	send(channel, content) {
 		return this.websocket.ws.send(`PRIVMSG ${channel} :${content}`);
+	}
+
+	/**
+	 * Sends a whisper to this user
+	 * @param {string} channel The channel the whisper will be sent in
+	 * @param {User|string} user The user to send the whisper to
+	 * @param {string} content The content to send
+	 */
+	whisper(channel, user, content) {
+		const destination = user instanceof User ? user.username : user;
+		return this.send(channel, `/w ${destination} ${content}`);
 	}
 
 	async _refreshToken() {
