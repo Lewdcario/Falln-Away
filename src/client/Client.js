@@ -36,7 +36,7 @@ class Client extends EventEmitter {
 	}
 
 	/**
-	 * logs the client in
+	 * Logs the client in
 	 * @returns {Promise<Client>}
 	 * @example
 	 * client.login()
