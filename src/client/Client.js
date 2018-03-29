@@ -5,6 +5,8 @@ const Database = require('../auth/Database');
 const { stringify } = require('querystring');
 const auth = require('../auth/auth');
 
+const User = require('../structures/User');
+
 /**
  * The starting point for making a Twitch Bot
  * @extends {EventEmitter}
@@ -27,25 +29,24 @@ class Client extends EventEmitter {
 		 * The WebSocket handler for the client
 		 * @type {WebSocket}
 		 */
-		this.ws = new WebSocket(this);
+		this.websocket = new WebSocket(this);
 
 		this._database = new Database(this.options.file_path, this);
 		auth.run.call(this);
 	}
 
 	/**
-	 * logs the client in
+	 * Logs the client in
 	 * @returns {Promise<Client>}
 	 * @example
 	 * client.login()
 	 * 	.then(() => console.log('Successfully logged in!'))
-	 * 	.catch(console.error);
+	 * 	.catch((e) => console.error('Failed to login', e));
 	 */
-	// TODO: add timeout to give up on refreshing
 	login() {
-		return this.ws.connect()
+		return this.websocket.connect()
 			.catch(() => this._refreshToken()
-				.then(this.login)
+				.then(() => this.login())
 				.catch((e) => this.emit('error', 'Refreshing token failed', e)));
 	}
 
@@ -58,7 +59,18 @@ class Client extends EventEmitter {
 	 */
 	// TODO: handle ratelimits, probably try catch, also make this a promise
 	send(channel, content) {
-		return this.ws.ws.send(`PRIVMSG ${channel} : ${content}`);
+		return this.websocket.ws.send(`PRIVMSG ${channel} :${content}`);
+	}
+
+	/**
+	 * Sends a whisper to this user
+	 * @param {string} channel The channel the whisper will be sent in
+	 * @param {User|string} user The user to send the whisper to
+	 * @param {string} content The content to send
+	 */
+	whisper(channel, user, content) {
+		const destination = user instanceof User ? user.username : user;
+		return this.send(channel, `/w ${destination} ${content}`);
 	}
 
 	async _refreshToken() {
@@ -73,9 +85,9 @@ class Client extends EventEmitter {
 				client_secret: this.options.client_secret
 			}), { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
 
-		if (!body) throw new Error('REFRESH FAILED');
+		if (!body || !body.data) throw new Error('REFRESH FAILED');
 
-		this._database._updateFile(body);
+		this._database._updateFile(body.data);
 
 		return body;
 	}

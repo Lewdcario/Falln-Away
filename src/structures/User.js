@@ -13,7 +13,8 @@ class User {
 		 * The username of the user
 		 * @type {string}
 		 */
-		this.username = data.match(/user-type= :(.*?)!/)[1];
+		this.username = /user-type= :(.*?)!/.test(data)
+			? data.match(/user-type= :(.*?)!/)[1] : data.match(/([^@]+)@([^.]+)/)[2];
 
 		/**
 		 * The user's selected display name
@@ -25,7 +26,7 @@ class User {
 		 * Whether or not the user is a bot
 		 * @type {boolean}
 		 */
-		this.bot = this.username.includes('bot') || this.username.includes('Bot');
+		this.bot = this.username.toLowerCase().includes('bot');
 
 		/**
 		 * Whether or not the user is the channel's broadcaster
