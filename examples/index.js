@@ -72,3 +72,5 @@ client.on('message', message => {
 client.on('debug', (m) => console.log('[DEBUG]', m));
 
 client.on('error', (m, e) => console.error('[ERROR]', m, e));
+
+process.on('unhandledRejection', (e) => console.error('[UNHANDLED REJECTION]', e));

@@ -6,5 +6,4 @@
 4. Documentation
 5. Timeouts
 6. Fix ready event handling (includes #6)
-7. Merge send/sendDM methods in next major
-8. Error class that uses enums for convenient message generation
+7. Error class that uses enums for convenient message generation

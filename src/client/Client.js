@@ -5,6 +5,7 @@ const Database = require('../auth/Database');
 const { stringify } = require('querystring');
 const auth = require('../auth/auth');
 
+const Collector = require('../structures/Collector');
 const User = require('../structures/User');
 
 /**
@@ -79,6 +80,36 @@ class Client extends EventEmitter {
 		return this.send(channel, `/w ${destination} ${content}`);
 	}
 
+	/**
+	 * Promisified version of Collector
+	 * @param {Object} [options={}] The options to use
+	 * @param {function} options.filter The filter function to use
+	 * @param {number} [options.max] How many messages to attempt to filter
+	 * @param {number} [options.maxMatches] How many messages to collect after passing the filter
+	 * @param {Channel} [options.channel] The channel to collect messages in, or none for all channels
+	 * @returns {Promise<Map>}
+	 */
+	awaitMessages({ filter, max, maxMatches, channel }) {
+		if (typeof filter !== 'function') throw new Error('awaitMessages: filter function required');
+		return new Promise((resolve) => {
+			const collector = new Collector(this, { filter, max, maxMatches, channel });
+			collector.once('end', resolve);
+		});
+	}
+
+	/**
+	 * Revokes the token used to log in.
+	 * @returns {Promise}
+	 */
+	revokeToken() {
+		const TOKEN_PARAMS = [
+			`client_id=${this.options.client_id}`,
+			`token=${this.options.access_token}`
+		].join('&');
+
+		return axios.post(`https://api.twitch.tv/kraken/oauth2/revoke?${TOKEN_PARAMS}`);
+	}
+
 	async _refreshToken() {
 		if (!this.options.client_secret) throw new Error('MISSING CLIENT SECRET');
 		if (!this.options.refresh_token) throw new Error('MISSING REFRESH TOKEN');
@@ -96,15 +127,6 @@ class Client extends EventEmitter {
 		this._database._updateFile(body.data);
 
 		return body;
-	}
-
-	revokeToken() {
-		const TOKEN_PARAMS = [
-			`client_id=${this.options.client_id}`,
-			`token=${this.options.access_token}`
-		].join('&');
-
-		return axios.post(`https://api.twitch.tv/kraken/oauth2/revoke?${TOKEN_PARAMS}`);
 	}
 }
 
