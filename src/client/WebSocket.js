@@ -47,18 +47,21 @@ class WebSocket {
 		this.client.emit('debug', message && message.data ? message.data : 'empty');
 		if (!message || !message.data) return null;
 		if (/user-id=(.\d*)/.test(message.data) && /PRIVMSG #(.*) :/.test(message.data)) {
-			this.client.emit('message', new Message(message.data));
+			return this.client.emit('message', new Message(message.data));
 		}
-		else if (message.data.includes('PING')) {
+		if (message.data.includes('PING')) {
 			this.ws.send('PONG :tmi.twitch.tv');
-			this.client.emit('debug', 'Responded with PONG to Twitch');
+			return this.client.emit('debug', 'Responded with PONG to Twitch');
 		}
-		else if (message.data.includes('authentication failed')) {
+		if (message.data.includes('authentication failed')) {
 			return reject(new Error('Invalid authorization token was provided'));
 		}
-		else if (message.data.includes('Welcome')) {
+		if (message.data.includes('Welcome')) {
 			this.client.emit('ready');
 			return resolve(this.client);
+		}
+		if (message.data.includes('msg_ratelimit') || message.data.includes('msg_duplicate')) {
+			return this.client.emit('ratelimit', message.data);
 		}
 		return null;
 	}

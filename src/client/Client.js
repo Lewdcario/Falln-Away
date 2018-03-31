@@ -54,12 +54,18 @@ class Client extends EventEmitter {
 	 * Sends a message to a channel
 	 * @param {string} channel The channel to send the message to
 	 * @param {string} content The content to send
+	 * @returns {Promise}
 	 * @example
-	 * client.send(message.channel, 'Hello!');
+	 * client.send(message.channel, 'Hello!')
+	 * 	.then(console.log)
+	 * 	.catch(console.error);
 	 */
-	// TODO: handle ratelimits, probably try catch, also make this a promise
 	send(channel, content) {
-		return this.websocket.ws.send(`PRIVMSG ${channel} :${content}`);
+		return new Promise((resolve, reject) => {
+			this.once('ratelimit', reject);
+			setTimeout(() => resolve(), 500);
+			this.websocket.ws.send(`PRIVMSG ${channel} :${content}`, e => e && reject(e));
+		});
 	}
 
 	/**
