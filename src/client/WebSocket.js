@@ -66,11 +66,11 @@ class WebSocket {
 		return null;
 	}
 
-	async onError(error, reject) {
+	onError(error, reject) {
 		return reject(new Error(`WebSocket errored with code ${error.code}, message: ${error.message}`));
 	}
 
-	async onClose(error, reject) {
+	onClose(error, reject) {
 		return reject(new Error(`WebSocket closed with code ${error.code}, message: ${error.message}`));
 	}
 }

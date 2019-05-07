@@ -1,6 +1,6 @@
 {
     "client_id": "<clientid>",
-    "client_secret": "<clientsecret>",
+    "client_secret": "<secret>",
     "base": "http://localhost",
     "redirect": "/auth/twitch",
     "callback": "/auth/twitch/callback",
@@ -11,6 +11,6 @@
         "<channelname>"
     ],
     "file_path": "<absolutepathtothisfile>",
-    "access_token": "",
+    "access_token": "<token>",
     "refresh_token": ""
 }
